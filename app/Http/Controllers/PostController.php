@@ -29,7 +29,12 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        Post::create(["title" => $request->title, "content" => $request->content]);
+        $validated = $request->validate([
+            'title' => ['required', 'min:5', 'max:255'],
+            'content' => ['required', 'min:10'],
+        ]);
+
+        Post::create($validated);
 
         return to_route('posts.index');
     }
@@ -55,7 +60,14 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        $validated = $request->validate([
+            'title' => ['required', 'min:5', 'max:255'],
+            'content' => ['required', 'min:10'],
+        ]);
+
+        $post->update($validated);
+
+        return to_route("posts.index");
     }
 
     /**
