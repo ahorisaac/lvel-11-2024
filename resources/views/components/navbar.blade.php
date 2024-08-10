@@ -27,6 +27,9 @@
                 @endguest
 
                 @auth
+                    <span class="text-blue-600 dark:text-blue-400 font-semibold">
+                        {{ auth()->user()->name }}
+                    </span>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <x-navbar-link href="{{ route('logout') }}" :active="false"
