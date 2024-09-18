@@ -33,7 +33,10 @@ class PostController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'min:5', 'max:255'],
             'content' => ['required', 'min:10'],
+            'thumbnail' => ['required', 'image'],
         ]);
+
+        $validated['thumbnail'] = $request->file('thumbnail')->store('thumbnails');
 
         auth()->user()->posts()->create($validated);
 
@@ -67,7 +70,19 @@ class PostController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'min:5', 'max:255'],
             'content' => ['required', 'min:10'],
+            'thumbnail' => ['sometimes', 'image'],
         ]);
+
+        if ($request->hasFile('thumbnail')) {
+
+            $imagePath = storage_path("app/" . $post->thumbnail);
+
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+
+            $validated['thumbnail'] = $request->file('thumbnail')->store('thumbnails');
+        }
 
         $post->update($validated);
 
@@ -80,6 +95,13 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         Gate::authorize("delete", $post);
+
+        $imagePath = storage_path("app/" . $post->image);
+
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+        }
+
         $post->delete();
         return to_route('posts.index');
     }

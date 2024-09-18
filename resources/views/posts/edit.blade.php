@@ -2,7 +2,7 @@
     <x-header>Posts Edit Page</x-header>
 
     <div class="max-w-2xl mx-auto p-4 bg-slate-200 dark:bg-slate-900 rounded-lg mt-5">
-        <form method="POST" action="{{ route('posts.update', $post->id) }}">
+        <form method="POST" action="{{ route('posts.update', $post->id) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -13,6 +13,18 @@
                     class="@error('title') border-red-500 @enderror bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none"
                     value="{{ old('title', $post->title) }}">
                 @error('title')
+                    <span class="text-red-500 text-xs my-2"> {{ $message }} </span>
+                @enderror
+            </div>
+
+            {{-- file input --}}
+            <div class="mb-6">
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    for="file_input">Thumbnail</label>
+                <input
+                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                    id="thumbnail" name="thumbnail" type="file">
+                @error('thumbnail')
                     <span class="text-red-500 text-xs my-2"> {{ $message }} </span>
                 @enderror
             </div>
