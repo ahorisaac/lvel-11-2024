@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\PostMail;
+use App\Jobs\SendNewPostMailJob;
 use App\Models\{Post};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Mail;
 
 class PostController extends Controller
 {
@@ -42,7 +41,7 @@ class PostController extends Controller
 
         auth()->user()->posts()->create($validated);
 
-        Mail::to(auth()->user()->email)->send(new PostMail(["name" => "Trey", "title" => $validated["title"]]));
+        dispatch(new SendNewPostMailJob(["email" => auth()->user()->email, "name" => auth()->user()->name, "title" => $validated["title"]]));
 
         return to_route('posts.index');
     }
