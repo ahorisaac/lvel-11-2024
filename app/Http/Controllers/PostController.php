@@ -14,7 +14,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::paginate(6);
         return view("posts.index", ["posts" => $posts]);
     }
 
@@ -43,7 +43,7 @@ class PostController extends Controller
 
         dispatch(new SendNewPostMailJob(["email" => auth()->user()->email, "name" => auth()->user()->name, "title" => $validated["title"]]));
 
-        return to_route('posts.index');
+        return to_route('posts.index')->with("message", "Post created successfully.");
     }
 
     /**
@@ -89,7 +89,7 @@ class PostController extends Controller
 
         $post->update($validated);
 
-        return to_route("posts.index");
+        return to_route("posts.index")->with("message", "Post updated successfully.");
     }
 
     /**
