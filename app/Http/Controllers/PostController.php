@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\SendNewPostMailJob;
 use App\Models\{Post};
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
@@ -14,7 +15,21 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::paginate(6);
+        /* method 1
+        if (Cache::has("posts")) {
+            $posts = Cache::get("posts");
+        } else {
+            sleep(4);
+            $posts = Post::paginate(6);
+            Cache::put("posts", $posts, 10);
+        }
+        */
+
+        $posts = Cache::remember("posts", 10, function () {
+            sleep(4);
+            return Post::paginate(6);
+        });
+
         return view("posts.index", ["posts" => $posts]);
     }
 
